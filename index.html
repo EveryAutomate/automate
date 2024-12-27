@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Process Request Form</h1>
+    <form id="requestForm">
+        <div class="form-group">
+            <label for="scenarioName">Scenario Name:</label>
+            <input type="text" id="scenarioName" value="scenarios" required>
+        </div>
+        <div class="form-group">
+            <label for="initialInput">Initial Input:</label>
+            <textarea id="initialInput" rows="6" required>Our: {app} helps: {business professionals} who want to: {improve or build a business} by: {avoid making stuff nobody wants} and: {creating clear indicators to measure progress}</textarea>
+        </div>
+        <button type="submit">Submit Request</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('requestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const responseDiv = document.getElementById('response');
+            responseDiv.textContent = 'Sending request...';
+            
+            const requestData = {
+                scenario_name: document.getElementById('scenarioName').value,
+                initial_input: document.getElementById('initialInput').value
+            };
+            
+            try {
+                const response = await fetch('https://us-central1-everyautomate.cloudfunctions.net/process_request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseDiv.textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

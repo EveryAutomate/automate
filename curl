@@ -1,0 +1,33 @@
+curl https://api.anthropic.com/v1/messages \
+     --header "x-api-key: $ANTHROPIC_API_KEY" \
+     --header "anthropic-version: 2023-06-01" \
+     --header "content-type: application/json" \
+     --data \
+'{
+    "model": "claude-3-5-sonnet-20241022",
+    "max_tokens": 1024,
+    "messages": [
+        {"role": "user", "content": "Hello, world"}
+    ]
+}'
+
+
+--
+
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=GEMINI_API_KEY" \
+-H 'Content-Type: application/json' \
+-X POST \
+-d '{
+  "contents": [{
+    "parts":[{"text": "Explain how AI works"}]
+    }]
+   }'
+
+--
+
+curl -X POST http://127.0.0.1:5001/everyautomate/us-central1/process_request \
+-H "Content-Type: application/json" \
+-d '{
+  "scenario_name": "scenarios",
+  "initial_input": "Our: {app} helps: {business professionals} who want to: {improve or build a business} by: {avoid making stuff nobody wants} and: {creating clear indicators to measure progress}"
+}'

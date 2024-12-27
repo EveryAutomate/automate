@@ -1,0 +1,215 @@
+ad-lib
+		project name
+		Our :  "products and services" ,
+		help(s) : "customer segement",
+		who wants to : "jobs to be done",
+		by : "your own verb eg reducing, avoiding",
+		and: "your own verb (eg increasing, enabling)",
+		unlike : "competing value propositions"
+
+			project_name: meta_app
+			Our: {app} 
+			helps: {business professionals} 
+			who want to: {improve or build a business} 
+			by : {avoid making stuff nobody wants} 
+			and : {creating clear indicators to measure progress}
+
+
+service:
+		name
+		scenario
+		domain_object_1
+		domain_object_2
+		domain_object_n
+
+			sample:
+				meta_app
+					meta_app
+					feedback
+
+	artifact:
+		name
+		attr_1
+		attr_2
+		attr_n
+		view_model
+
+
+provider
+		name: str
+		method: str
+		config: str
+		
+			sample
+				name: gemini
+				url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=ACCESS_TOKEN" \
+				headers: 'Content-Type: application/json' \
+				method: POST \
+
+				payload: gemini_artifact_sample
+--
+
+
+artifact instances (samples)
+
+	prompt:
+		name
+		instructions
+		objects
+		template
+
+		sample:
+			name: scenarios
+			"instructions": """
+				use the following constraints to generate a scenario given the template below; 
+				prefix: [given, and, when, then]; 
+				actors: [user, system]; 
+				user actions: [reads, writes, clicks]; 
+				system actions: [reads, writes, updates, deletes, sends, manipulates]; 
+				articles: [a, an, the]
+
+				accepted kwargs: 
+
+					read
+						collection_name: str
+						identifier: optional str
+						filters: optional list
+
+					write
+						collection: str
+						data: Union[Dict, List[Dict]]
+
+					update
+						collection: str
+						identifier: str
+						updates: dict
+
+					delete
+						collection : str
+						identifier: optional str
+						field: optional str
+
+					send:
+						collection
+						method
+						access_token
+						payload
+
+					manipulate:
+						input_1
+						input_2
+						input_n
+						objective
+						method
+						outputs
+		
+				""",
+
+			"objects": "user story",
+			"template": """{
+				"domain_objects": [],
+				"flow": {
+					"s1": {
+						"actor": "",
+						"action": "",
+						"domain object": "",
+						"quote": "{prefix} the {actor} {action} {article} {domain_object} and the params are: ",
+						"kwargs": "str dict kwargs",
+						"output": "name of the return item"
+
+					},
+					"s2": {
+						"actor": "",
+						"action": "",
+						"domain object": "",
+						"quote": "{prefix} the {actor} {action} {article} {domain_object}",
+						"kwargs": "str dict kwargs",
+						"output": "name of the return item"
+					},
+					"sn": {
+						"actor": "",
+						"action": "",
+						"domain object": "",
+						"quote": "{prefix} the {actor} {action} {article} {domain_object}",
+						"kwargs": "str dict kwargs",
+						"output": "name of the return item"
+					}
+				},
+			}"""
+
+
+	scenario:
+		name
+		input
+		s1
+		s2
+		sn
+			samples:
+				content_gen
+					input: str
+
+				   	s1: 
+				   		"actor": "system",
+            			"action": "reads",
+            			"kwargs": "{
+            				"collection": "prompts",
+            				"identifier": "scenario"
+            			}"
+            			"output_name": "artifact"
+
+
+            		s2: 
+            			"actor": "system",
+            			"action": "manipulates",
+            			"kwargs": "{
+            				input_1: params,
+            				input_2: artifact,
+            				method: concatenate,
+            				output: prompt
+            			}"
+
+
+            		s3: 
+            			"actor": "system",
+            			"action": "sends",
+            			"kwargs": "{
+            				"provider": "gemini",
+            				"method": "POST"
+            				"access_token": "AIzaSyBUbJ72Ki9Rgiit1w2nHr8V6BS3veCJhHs"
+            				"payload": "prompt",
+            				"output": "generated_content"
+            			}"
+
+
+            		s4:
+            			"actor": "system",
+            			"action": "write",
+            			"kwargs": "{
+            				"collection": "scenarios";
+            				"data": "generated_content"
+            			}"
+            			"output": "content"
+
+
+	
+
+	provider
+		name: str
+		method: str
+		config: str
+		
+			sample
+				name: gemini
+				url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=ACCESS_TOKEN" \
+				headers: 'Content-Type: application/json' \
+				method: POST \
+
+				payload: gemini_artifact_sample
+
+
+			
+
+
+
+
+
