@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Component Generator</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    function createInputField(field, value = "", mode, onChangeCallback) {
+      if (field.name === "image") {
+        const placeholder = document.createElement("div");
+        placeholder.className = "image-placeholder";
+        placeholder.innerHTML = `<span>Image Placeholder</span>`;
+        placeholder.style.cursor = "pointer";
+
+        placeholder.addEventListener("click", () => {
+          alert("Add or edit the image here!");
+        });
+
+        return placeholder;
+      }
+
+      const input = document.createElement("input");
+
+      if (field.type === "bool") {
+        input.type = "checkbox";
+        input.checked = !!value;
+      } else if (field.type === "str") {
+        input.type = "text";
+      } else if (field.type === "int" || field.type === "float") {
+        input.type = "number";
+      } else {
+        input.type = "text";
+      }
+
+      input.id = field.name;
+      input.name = field.name;
+      input.value = value || "";
+
+      input.addEventListener("focus", () => {
+        input.style.backgroundColor = "white";
+        input.style.borderColor = "#007BFF";
+        input.style.color = "black";
+      });
+
+      input.addEventListener("blur", () => {
+        if (!input.value) {
+          input.style.backgroundColor = "#f0f0f0";
+          input.style.borderColor = "transparent";
+          input.style.color = "#888";
+        }
+      });
+
+      input.addEventListener("input", () => {
+        onChangeCallback();
+      });
+
+      return input;
+    }
+
+    function generateComponent(schema, state = {}, mode = "write") {
+      const form = document.createElement("form");
+      form.id = `${schema.name.toLowerCase()}-form`;
+
+      let formChanged = false;
+
+      const submitButton = document.createElement("button");
+      submitButton.type = "submit";
+      submitButton.textContent = "Submit";
+
+      const handleFormChange = () => {
+        if (!formChanged) {
+          formChanged = true;
+          submitButton.style.display = "block";
+        }
+      };
+
+      schema.fields.forEach((field) => {
+        const label = document.createElement("label");
+        label.setAttribute("for", field.name);
+        label.textContent = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+
+        const input = createInputField(field, state[field.name], mode, handleFormChange);
+
+        form.appendChild(label);
+        form.appendChild(input);
+      });
+
+      form.appendChild(submitButton);
+
+      return form;
+    }
+
+    const schemas = [
+      {
+        name: "Product",
+        fields: [
+          { name: "id", type: "str" },
+          { name: "name", type: "str" },
+          { name: "description", type: "str" },
+          { name: "price", type: "float" },
+          { name: "stock", type: "int" },
+          { name: "image", type: "str" }
+        ]
+      },
+      {
+        name: "Cart",
+        fields: [
+          { name: "id", type: "str" },
+          { name: "user_id", type: "str" },
+          { name: "total", type: "float" }
+        ]
+      },
+      {
+        name: "CartItems",
+        fields: [
+          { name: "cart_id", type: "str" },
+          { name: "product_id", type: "str" },
+          { name: "quantity", type: "int" }
+        ]
+      }
+    ];
+
+    const states = {
+      Product: {
+        id: "123",
+        name: "Laptop",
+        description: "A high-end gaming laptop.",
+        price: 1999.99,
+        stock: 20,
+        image: "laptop.jpg"
+      },
+      Cart: {
+        id: "456",
+        user_id: "789",
+        total: 2499.99
+      },
+      CartItems: {
+        cart_id: "456",
+        product_id: "123",
+        quantity: 2
+      }
+    };
+
+    const app = document.getElementById("app");
+
+    schemas.forEach((schema) => {
+      const readForm = generateComponent(schema, states[schema.name], "read");
+      const readTitle = document.createElement("h3");
+      readTitle.textContent = `${schema.name} Form`;
+      app.appendChild(readTitle);
+      app.appendChild(readForm);
+    });
+  </script>
+</body>
+</html>
